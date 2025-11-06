@@ -43,10 +43,15 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
 
       {/* Commodity Selector */}
       <div className="space-y-2">
-        <Label htmlFor="commodity">Commodity</Label>
+        <Label htmlFor="commodity" className="text-sm font-semibold text-foreground">
+          Select Mineral Commodity
+        </Label>
         <Select value={filters.commodity} onValueChange={handleCommodityChange}>
-          <SelectTrigger id="commodity">
-            <SelectValue placeholder="Select a commodity" />
+          <SelectTrigger
+            id="commodity"
+            className="w-full bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 hover:border-[#003C6E] focus:border-[#003C6E] transition-colors"
+          >
+            <SelectValue placeholder="Choose a commodity..." />
           </SelectTrigger>
           <SelectContent>
             {COMMODITIES.map((commodity) => (
@@ -56,12 +61,17 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
             ))}
           </SelectContent>
         </Select>
+        <p className="text-xs text-muted-foreground">
+          Select a mineral to view its statistics
+        </p>
       </div>
 
       {/* Year Range Slider */}
-      <div className="space-y-4">
-        <Label>Year Range</Label>
-        <div className="space-y-2">
+      <div className="space-y-3 py-2">
+        <Label className="text-sm font-semibold text-foreground">
+          Time Period
+        </Label>
+        <div className="px-1">
           <Slider
             value={[filters.yearFrom, filters.yearTo]}
             onValueChange={handleYearRangeChange}
@@ -70,39 +80,53 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
             step={1}
             className="w-full"
           />
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>{filters.yearFrom}</span>
-            <span>{filters.yearTo}</span>
-          </div>
         </div>
+        <div className="flex justify-between items-center text-sm font-medium text-foreground px-1">
+          <span className="bg-[#003C6E] text-white px-3 py-1.5 rounded-md shadow-sm">
+            {filters.yearFrom}
+          </span>
+          <span className="text-muted-foreground font-normal">to</span>
+          <span className="bg-[#003C6E] text-white px-3 py-1.5 rounded-md shadow-sm">
+            {filters.yearTo}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Drag the handles to adjust the year range
+        </p>
       </div>
 
       {/* Data Type Toggle */}
       <div className="space-y-3">
-        <Label>Data Type</Label>
+        <Label className="text-sm font-semibold text-foreground">
+          Statistics Type
+        </Label>
         <RadioGroup
           value={filters.dataType}
           onValueChange={handleDataTypeChange}
+          className="space-y-2"
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             <RadioGroupItem value="production" id="production" />
-            <Label htmlFor="production" className="font-normal cursor-pointer">
+            <Label htmlFor="production" className="font-normal cursor-pointer flex-1">
               Production
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             <RadioGroupItem value="imports" id="imports" />
-            <Label htmlFor="imports" className="font-normal cursor-pointer">
+            <Label htmlFor="imports" className="font-normal cursor-pointer flex-1">
               Imports
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             <RadioGroupItem value="exports" id="exports" />
-            <Label htmlFor="exports" className="font-normal cursor-pointer">
+            <Label htmlFor="exports" className="font-normal cursor-pointer flex-1">
               Exports
             </Label>
           </div>
         </RadioGroup>
+        <p className="text-xs text-muted-foreground">
+          Choose the type of data to display
+        </p>
       </div>
     </Card>
   );
