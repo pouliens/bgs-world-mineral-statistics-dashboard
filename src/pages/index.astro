@@ -1,0 +1,20 @@
+---
+import '../styles/global.css';
+import { Dashboard } from '../components/Dashboard';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>BGS World Mineral Statistics Dashboard</title>
+		<meta name="description" content="Comprehensive mineral production, import, and export data from 1970-2023" />
+	</head>
+
+	<body>
+		<Dashboard client:load />
+	</body>
+</html>

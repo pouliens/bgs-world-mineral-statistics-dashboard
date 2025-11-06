@@ -1,0 +1,22 @@
+image: oven/bun:latest
+
+pages:
+  stage: deploy
+  script:
+    # Install dependencies
+    - bun install
+
+    # Build the project
+    - bun run build
+
+    # Astro outputs to 'dist' but GitLab Pages expects 'public'
+    - mv dist public
+
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+  cache:
+    paths:
+      - node_modules/

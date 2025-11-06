@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bunx create-astro@latest:*)",
+      "Bash(bun:*)",
+      "Bash(mv:*)",
+      "Bash(rmdir:*)",
+      "Bash(bunx astro:*)",
+      "Bash(bunx shadcn@latest init:*)",
+      "Bash(test:*)",
+      "Bash(bunx shadcn@latest add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
