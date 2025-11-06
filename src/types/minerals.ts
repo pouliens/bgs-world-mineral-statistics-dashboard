@@ -21,17 +21,26 @@ export interface Feature {
 }
 
 export interface MineralProperties {
-  OBJECTID: number;
-  COMMODITY: string;
-  COMMODITY_URI: string;
-  COUNTRY: string;
-  COUNTRY_URI: string;
+  OBJECTID?: number;
+  COUNTRY_NAME: string;
+  ERML_COMMODITY: string;
+  ERML_SUBCOMMODITY?: string;
   YEAR: number;
+  PROD_AMOUNT?: number;
+  PROD_UNIT?: string;
+  IMP_AMOUNT?: number;
+  IMP_UNIT?: string;
+  EXP_AMOUNT?: number;
+  EXP_UNIT?: string;
+  PARENT_COMMODITY?: number;
+  SOURCE?: string;
+  // Legacy field names for backwards compatibility
+  COUNTRY?: string;
+  COMMODITY?: string;
   PRODUCTION?: number;
   IMPORTS?: number;
   EXPORTS?: number;
   UNIT?: string;
-  SOURCE?: string;
 }
 
 export interface FilterOptions {

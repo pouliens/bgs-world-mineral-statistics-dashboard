@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FilterPanel } from './FilterPanel';
 import { TimeSeriesChart } from './TimeSeriesChart';
 import { ComparisonBarChart } from './ComparisonBarChart';
 import { MineralDataTable } from './MineralDataTable';
 import { InsightsPanel } from './InsightsPanel';
 import { Card, CardContent } from '@/components/ui/card';
+import { fetchMineralData } from '@/lib/mineralService';
 import type {
   FilterOptions,
-  MineralData,
   MineralProperties,
   ChartDataPoint,
   MetricCard,
@@ -29,22 +28,20 @@ export function Dashboard({ client:load }: { 'client:load': true }) {
 
   // Fetch data when filters change
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
       if (!filters.commodity) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        const response = await axios.get<MineralData>('/api/minerals', {
-          params: {
-            commodity: filters.commodity,
-            yearFrom: filters.yearFrom,
-            yearTo: filters.yearTo,
-          },
+        const mineralData = await fetchMineralData({
+          commodity: filters.commodity,
+          yearFrom: filters.yearFrom,
+          yearTo: filters.yearTo,
         });
 
-        const features = response.data.features || [];
+        const features = mineralData.features || [];
         const properties = features.map((f) => f.properties);
         setData(properties);
       } catch (err) {
@@ -55,12 +52,26 @@ export function Dashboard({ client:load }: { 'client:load': true }) {
       }
     };
 
-    fetchData();
+    loadData();
   }, [filters.commodity, filters.yearFrom, filters.yearTo]);
+
+  // Map filter dataType to actual API field name
+  const getDataField = (): keyof MineralProperties => {
+    switch (filters.dataType) {
+      case 'production':
+        return 'PROD_AMOUNT';
+      case 'imports':
+        return 'IMP_AMOUNT';
+      case 'exports':
+        return 'EXP_AMOUNT';
+      default:
+        return 'PROD_AMOUNT';
+    }
+  };
 
   // Process data for charts
   const getChartData = (): ChartDataPoint[] => {
-    const dataKey = filters.dataType.toUpperCase() as keyof MineralProperties;
+    const dataKey = getDataField();
 
     const aggregated = data.reduce((acc, item) => {
       const year = item.YEAR;
@@ -88,10 +99,10 @@ export function Dashboard({ client:load }: { 'client:load': true }) {
 
   // Get top countries for comparison
   const getTopCountries = (limit: number = 5) => {
-    const dataKey = filters.dataType.toUpperCase() as keyof MineralProperties;
+    const dataKey = getDataField();
 
     const countryTotals = data.reduce((acc, item) => {
-      const country = item.COUNTRY;
+      const country = item.COUNTRY_NAME || item.COUNTRY || 'Unknown';
       const value = item[dataKey] as number | undefined;
 
       if (!acc[country]) {
@@ -115,7 +126,7 @@ export function Dashboard({ client:load }: { 'client:load': true }) {
   const getMetrics = (): MetricCard[] => {
     if (data.length === 0) return [];
 
-    const dataKey = filters.dataType.toUpperCase() as keyof MineralProperties;
+    const dataKey = getDataField();
     const values = data
       .map((item) => item[dataKey] as number | undefined)
       .filter((v): v is number => v !== undefined && v !== null);
@@ -168,14 +179,14 @@ export function Dashboard({ client:load }: { 'client:load': true }) {
   const exportToCSV = () => {
     if (data.length === 0) return;
 
-    const headers = ['Year', 'Country', 'Production', 'Imports', 'Exports', 'Unit'];
+    const headers = ['Year', 'Country', 'Commodity', 'Production', 'Imports', 'Exports'];
     const rows = data.map((item) => [
       item.YEAR,
-      item.COUNTRY,
-      item.PRODUCTION || '',
-      item.IMPORTS || '',
-      item.EXPORTS || '',
-      item.UNIT || '',
+      item.COUNTRY_NAME || item.COUNTRY || '',
+      item.ERML_COMMODITY || '',
+      `${item.PROD_AMOUNT || ''}${item.PROD_UNIT ? ' ' + item.PROD_UNIT : ''}`,
+      `${item.IMP_AMOUNT || ''}${item.IMP_UNIT ? ' ' + item.IMP_UNIT : ''}`,
+      `${item.EXP_AMOUNT || ''}${item.EXP_UNIT ? ' ' + item.EXP_UNIT : ''}`,
     ]);
 
     const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');

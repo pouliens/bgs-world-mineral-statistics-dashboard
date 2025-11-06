@@ -8,7 +8,8 @@
       "Bash(bunx astro:*)",
       "Bash(bunx shadcn@latest init:*)",
       "Bash(test:*)",
-      "Bash(bunx shadcn@latest add:*)"
+      "Bash(bunx shadcn@latest add:*)",
+      "WebFetch(domain:ogc2.bgs.ac.uk)"
     ],
     "deny": [],
     "ask": []

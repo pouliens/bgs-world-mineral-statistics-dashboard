@@ -45,7 +45,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
       },
     },
     {
-      accessorKey: 'COUNTRY',
+      accessorKey: 'COUNTRY_NAME',
       header: ({ column }) => {
         return (
           <Button
@@ -57,9 +57,12 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           </Button>
         );
       },
+      cell: ({ row }) => {
+        return row.original.COUNTRY_NAME || row.original.COUNTRY || '-';
+      },
     },
     {
-      accessorKey: 'PRODUCTION',
+      accessorKey: 'PROD_AMOUNT',
       header: ({ column }) => {
         return (
           <Button
@@ -72,12 +75,13 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
         );
       },
       cell: ({ row }) => {
-        const value = row.getValue('PRODUCTION') as number;
-        return value ? value.toLocaleString() : '-';
+        const value = row.original.PROD_AMOUNT;
+        const unit = row.original.PROD_UNIT;
+        return value ? `${value.toLocaleString()}${unit ? ' ' + unit : ''}` : '-';
       },
     },
     {
-      accessorKey: 'IMPORTS',
+      accessorKey: 'IMP_AMOUNT',
       header: ({ column }) => {
         return (
           <Button
@@ -90,12 +94,13 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
         );
       },
       cell: ({ row }) => {
-        const value = row.getValue('IMPORTS') as number;
-        return value ? value.toLocaleString() : '-';
+        const value = row.original.IMP_AMOUNT;
+        const unit = row.original.IMP_UNIT;
+        return value ? `${value.toLocaleString()}${unit ? ' ' + unit : ''}` : '-';
       },
     },
     {
-      accessorKey: 'EXPORTS',
+      accessorKey: 'EXP_AMOUNT',
       header: ({ column }) => {
         return (
           <Button
@@ -108,13 +113,10 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
         );
       },
       cell: ({ row }) => {
-        const value = row.getValue('EXPORTS') as number;
-        return value ? value.toLocaleString() : '-';
+        const value = row.original.EXP_AMOUNT;
+        const unit = row.original.EXP_UNIT;
+        return value ? `${value.toLocaleString()}${unit ? ' ' + unit : ''}` : '-';
       },
-    },
-    {
-      accessorKey: 'UNIT',
-      header: 'Unit',
     },
   ];
 
