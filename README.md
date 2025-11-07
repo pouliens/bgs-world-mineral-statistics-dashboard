@@ -2,6 +2,8 @@
 
 A professional, interactive dashboard for visualizing and analyzing BGS (British Geological Survey) World Mineral Statistics data. This dashboard provides comprehensive insights into mineral production, imports, and exports from 1970-2023.
 
+Published on GitHub Pages: https://pouliens.github.io/bgs-world-mineral-statistics-dashboard/
+
 ## Features
 
 - **Interactive Visualizations**: Time-series line charts and comparative bar charts using Recharts
