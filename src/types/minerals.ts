@@ -49,6 +49,8 @@ export interface FilterOptions {
   yearFrom: number;
   yearTo: number;
   dataType: 'production' | 'imports' | 'exports';
+  comparisonMode?: boolean;
+  selectedCommodities?: string[];
 }
 
 export interface ChartDataPoint {
@@ -60,24 +62,54 @@ export interface ChartDataPoint {
 export interface MetricCard {
   title: string;
   value: string | number;
+  subtitle?: string; // Optional subtitle for additional context
   change?: number;
   trend?: 'up' | 'down' | 'stable';
+  icon?: 'trophy' | 'calendar' | 'globe' | 'activity'; // Optional icon identifier
 }
 
 // Common commodities for the commodity selector
+// Note: Values must match the CGI commodity code identifiers
 export const COMMODITIES = [
+  { value: 'aluminium', label: 'Aluminium' },
   { value: 'antimony', label: 'Antimony' },
+  { value: 'barite', label: 'Barite' },
   { value: 'bauxite', label: 'Bauxite' },
+  { value: 'bentonite', label: 'Bentonite' },
+  { value: 'bismuth', label: 'Bismuth' },
+  { value: 'cadmium', label: 'Cadmium' },
+  { value: 'chromium', label: 'Chromium' },
+  { value: 'cobalt', label: 'Cobalt' },
   { value: 'copper', label: 'Copper' },
+  { value: 'diamond', label: 'Diamond' },
+  { value: 'feldspar', label: 'Feldspar' },
+  { value: 'fluorite', label: 'Fluorite' },
   { value: 'gold', label: 'Gold' },
+  { value: 'graphite', label: 'Graphite' },
+  { value: 'gypsum', label: 'Gypsum' },
   { value: 'iron-ore', label: 'Iron Ore' },
+  { value: 'kaolin', label: 'Kaolin' },
   { value: 'lead', label: 'Lead' },
   { value: 'lithium', label: 'Lithium' },
+  { value: 'magnesium', label: 'Magnesium' },
+  { value: 'manganese', label: 'Manganese' },
+  { value: 'mercury', label: 'Mercury' },
+  { value: 'molybdenum', label: 'Molybdenum' },
   { value: 'nickel', label: 'Nickel' },
+  { value: 'phosphate', label: 'Phosphate' },
+  { value: 'platinum', label: 'Platinum' },
+  { value: 'potash', label: 'Potash' },
+  { value: 'salt', label: 'Salt' },
   { value: 'silver', label: 'Silver' },
+  { value: 'sulfur', label: 'Sulfur' },
+  { value: 'talc', label: 'Talc' },
   { value: 'tin', label: 'Tin' },
+  { value: 'titanium', label: 'Titanium' },
+  { value: 'tungsten', label: 'Tungsten' },
+  { value: 'uranium', label: 'Uranium' },
+  { value: 'vanadium', label: 'Vanadium' },
   { value: 'zinc', label: 'Zinc' },
-  { value: 'rare-earth-elements', label: 'Rare Earth Elements' },
+  { value: 'zirconium', label: 'Zirconium' },
 ] as const;
 
 export type CommodityType = typeof COMMODITIES[number]['value'];

@@ -11,8 +11,6 @@ export const GET: APIRoute = async ({ request }) => {
     const yearTo = url.searchParams.get('yearTo') || '2023';
     const outputFormat = url.searchParams.get('outputFormat') || 'JSON';
 
-    console.log('API Request:', { commodity, yearFrom, yearTo });
-
     if (!commodity) {
       return new Response(
         JSON.stringify({ error: 'Commodity parameter is required' }),
@@ -39,7 +37,6 @@ export const GET: APIRoute = async ({ request }) => {
     });
 
     const wfsUrl = `${BGS_WFS_BASE_URL}?${wfsParams.toString()}`;
-    console.log('Fetching from WFS:', wfsUrl);
 
     // Fetch data from BGS WFS service
     const response = await axios.get(wfsUrl, {
@@ -48,9 +45,6 @@ export const GET: APIRoute = async ({ request }) => {
         'Accept': 'application/json',
       },
     });
-
-    console.log('WFS Response status:', response.status);
-    console.log('WFS Response data type:', typeof response.data);
 
     return new Response(JSON.stringify(response.data), {
       status: 200,
@@ -61,16 +55,9 @@ export const GET: APIRoute = async ({ request }) => {
       },
     });
   } catch (error) {
-    console.error('Error fetching mineral data:', error);
-
     let errorDetails = 'Unknown error';
     if (axios.isAxiosError(error)) {
       errorDetails = error.response?.data || error.message;
-      console.error('Axios error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
     } else if (error instanceof Error) {
       errorDetails = error.message;
     }

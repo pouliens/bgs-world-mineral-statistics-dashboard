@@ -12,30 +12,39 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatCompactNumber } from '@/lib/utils';
 
-interface TimeSeriesData {
+interface MultiCommodityDataPoint {
   year: number;
-  production: number;
-  imports: number;
-  exports: number;
+  [key: string]: number; // Dynamic keys for each commodity
 }
 
-interface TimeSeriesChartProps {
-  data: TimeSeriesData[];
+interface MultiCommodityChartProps {
+  data: MultiCommodityDataPoint[];
+  commodities: string[];
   title: string;
 }
 
-export function TimeSeriesChart({
+const CHART_COLORS = [
+  '#002E40', // Deep Teal
+  '#AD9C70', // Gold
+  '#005571', // Mid Teal
+  '#C5B88A', // Light Gold
+  '#007A99', // Lighter Teal
+  '#8B7A5E', // Dark Gold
+];
+
+export function MultiCommodityChart({
   data,
+  commodities,
   title,
-}: TimeSeriesChartProps) {
+}: MultiCommodityChartProps) {
   return (
     <Card className="shadow-sm border-border">
       <CardHeader className="border-b border-border pb-4">
         <CardTitle className="text-lg font-bold text-foreground">{title}</CardTitle>
-        <CardDescription>Track production, imports, and exports trends over time</CardDescription>
+        <CardDescription>Compare production trends across multiple commodities</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={450}>
           <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.5} />
             <XAxis
@@ -60,33 +69,18 @@ export function TimeSeriesChart({
               formatter={(value: number) => formatCompactNumber(value, 0)}
             />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            <Line
-              type="monotone"
-              dataKey="production"
-              stroke="#002E40"
-              strokeWidth={2.5}
-              dot={{ r: 3, fill: '#002E40', strokeWidth: 2, stroke: '#fff' }}
-              activeDot={{ r: 5, fill: '#002E40', strokeWidth: 2, stroke: '#fff' }}
-              name="Production"
-            />
-            <Line
-              type="monotone"
-              dataKey="imports"
-              stroke="#AD9C70"
-              strokeWidth={2.5}
-              dot={{ r: 3, fill: '#AD9C70', strokeWidth: 2, stroke: '#fff' }}
-              activeDot={{ r: 5, fill: '#AD9C70', strokeWidth: 2, stroke: '#fff' }}
-              name="Imports"
-            />
-            <Line
-              type="monotone"
-              dataKey="exports"
-              stroke="#10b981"
-              strokeWidth={2.5}
-              dot={{ r: 3, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
-              activeDot={{ r: 5, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
-              name="Exports"
-            />
+            {commodities.map((commodity, index) => (
+              <Line
+                key={commodity}
+                type="monotone"
+                dataKey={commodity}
+                stroke={CHART_COLORS[index % CHART_COLORS.length]}
+                strokeWidth={2.5}
+                dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
+                name={commodity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

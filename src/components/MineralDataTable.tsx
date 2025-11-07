@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowUpDown, Download } from 'lucide-react';
 import type { MineralProperties } from '@/types/minerals';
 
@@ -27,7 +27,7 @@ interface MineralDataTableProps {
 }
 
 export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'YEAR', desc: true }]);
 
   const columns: ColumnDef<MineralProperties>[] = [
     {
@@ -37,6 +37,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-white hover:bg-white/10 hover:text-white"
           >
             Year
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -51,6 +52,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-white hover:bg-white/10 hover:text-white"
           >
             Country
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -68,6 +70,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-white hover:bg-white/10 hover:text-white"
           >
             Production
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -87,6 +90,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-white hover:bg-white/10 hover:text-white"
           >
             Imports
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -106,6 +110,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-white hover:bg-white/10 hover:text-white"
           >
             Exports
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -139,22 +144,25 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Mineral Data</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-4">
+        <div>
+          <CardTitle className="text-lg font-bold">Mineral Data</CardTitle>
+          <CardDescription>Detailed records of all mineral statistics</CardDescription>
+        </div>
         <Button onClick={onExport} variant="outline" size="sm">
           <Download className="mr-2 h-4 w-4" />
           Export CSV
         </Button>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
+      <CardContent className="pt-6">
+        <div className="rounded-md border overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-[#002E40]">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="hover:bg-[#002E40] border-b-0">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="text-white font-semibold">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -173,6 +181,7 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
+                    className="hover:bg-[#002E40]/5 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

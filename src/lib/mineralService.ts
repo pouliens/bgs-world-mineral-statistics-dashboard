@@ -36,7 +36,6 @@ export async function fetchMineralData({
   // In development, use Vite proxy
   if (import.meta.env.DEV) {
     const url = `/bgs-api?${wfsParams.toString()}`;
-    console.log('DEV: Fetching via Vite proxy:', url);
     const response = await axios.get<MineralData>(url);
     return response.data;
   }
@@ -45,22 +44,17 @@ export async function fetchMineralData({
   const bgsUrl = `http://ogc2.bgs.ac.uk/cgi-bin/UKWM/ows?${wfsParams.toString()}`;
   const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(bgsUrl)}`;
 
-  console.log('PROD: Fetching via CORS proxy');
-
   try {
     const response = await axios.get<MineralData>(corsProxyUrl, {
       timeout: 30000,
     });
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch from CORS proxy, trying direct:', error);
-
     // Fallback to direct fetch (may fail due to CORS)
     try {
       const response = await axios.get<MineralData>(bgsUrl);
       return response.data;
     } catch (directError) {
-      console.error('Direct fetch also failed:', directError);
       throw new Error('Failed to fetch mineral data from BGS. Please try again later.');
     }
   }

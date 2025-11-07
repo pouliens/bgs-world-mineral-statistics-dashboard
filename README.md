@@ -91,7 +91,9 @@ bun run dev
 └── package.json
 ```
 
-## Deployment to GitLab Pages
+## Deployment
+
+### GitLab Pages
 
 This project is configured for automatic deployment to GitLab Pages:
 
@@ -102,6 +104,23 @@ This project is configured for automatic deployment to GitLab Pages:
    export default defineConfig({
      site: 'https://your-username.gitlab.io',
      base: '/your-project-name',
+     // ...
+   });
+   ```
+
+### GitHub Pages
+
+This project is also configured for GitHub Pages deployment:
+
+1. Push your code to a GitHub repository
+2. Go to Settings > Pages
+3. Under "Build and deployment", select "GitHub Actions"
+4. The `.github/workflows/deploy.yml` file will automatically build and deploy on push to `main`
+5. If your project is not at the root, update `astro.config.mjs`:
+   ```js
+   export default defineConfig({
+     site: 'https://your-username.github.io',
+     base: '/your-repo-name',
      // ...
    });
    ```
