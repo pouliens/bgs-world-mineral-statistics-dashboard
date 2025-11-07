@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { COMMODITIES } from '@/types/minerals';
 import type { FilterOptions } from '@/types/minerals';
+import { Star } from 'lucide-react';
 
 interface FilterPanelProps {
   filters: FilterOptions;
@@ -67,7 +69,15 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
               <SelectContent>
                 {COMMODITIES.map((commodity) => (
                   <SelectItem key={commodity.value} value={commodity.value}>
-                    {commodity.label}
+                    <div className="flex items-center gap-2">
+                      <span>{commodity.label}</span>
+                      {commodity.isCritical && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-[#AD9C70] text-white border-0 pointer-events-none">
+                          <Star className="w-2.5 h-2.5 mr-0.5" />
+                          UK Critical
+                        </Badge>
+                      )}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -91,9 +101,12 @@ export function FilterPanel({ filters, onFiltersChange }: FilterPanelProps) {
                   />
                   <Label
                     htmlFor={`compare-${commodity.value}`}
-                    className="text-sm font-normal cursor-pointer flex-1"
+                    className="text-sm font-normal cursor-pointer flex-1 flex items-center gap-2"
                   >
-                    {commodity.label}
+                    <span>{commodity.label}</span>
+                    {commodity.isCritical && (
+                      <Star className="w-3 h-3 text-[#AD9C70] fill-[#AD9C70]" />
+                    )}
                   </Label>
                 </div>
               ))}

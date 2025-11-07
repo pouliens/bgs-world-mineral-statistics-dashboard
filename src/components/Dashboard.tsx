@@ -356,6 +356,7 @@ export function Dashboard() {
         subtitle: `${Math.abs(change).toFixed(1)}% vs previous year`,
         trend,
         change: Math.abs(Math.round(change)),
+        icon: 'chart',
       });
     }
 
@@ -594,7 +595,10 @@ export function Dashboard() {
       <main className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         {/* Filters Section - Full Width at Top */}
         <section className="mb-8">
-          <FilterPanel filters={filters} onFiltersChange={setFilters} />
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </section>
 
         {/* Key Insights - Horizontal Cards */}

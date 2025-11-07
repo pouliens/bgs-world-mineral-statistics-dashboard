@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, CheckCircle, AlertTriangle, Shield, ShieldAlert, ShieldOff, ShieldCheck } from 'lucide-react';
 
 interface CountryData {
   name: string;
@@ -62,16 +63,57 @@ export function ConcentrationIndexCard({
     return { level: 'High', color: 'text-red-600', icon: AlertCircle, bg: 'bg-red-50' };
   };
 
+  // Calculate Supply Risk Level
+  // Critical Risk (red): HHI > 2500 AND top 3 > 80%
+  // High Risk (orange): HHI > 2500 OR top 3 > 70%
+  // Moderate Risk (yellow): HHI 1500-2500
+  // Low Risk (green): HHI < 1500
+  const getSupplyRiskLevel = () => {
+    const top3Pct = typeof top3Concentration === 'string' ? parseFloat(top3Concentration) : 0;
+
+    if (hhi > 2500 && top3Pct > 80) {
+      return {
+        level: 'Critical Risk',
+        color: 'bg-red-600 text-white',
+        icon: ShieldOff,
+        description: 'Highly concentrated market with extreme supply chain vulnerability'
+      };
+    } else if (hhi > 2500 || top3Pct > 70) {
+      return {
+        level: 'High Risk',
+        color: 'bg-orange-500 text-white',
+        icon: ShieldAlert,
+        description: 'Concentrated market with significant supply chain risk'
+      };
+    } else if (hhi >= 1500 && hhi <= 2500) {
+      return {
+        level: 'Moderate Risk',
+        color: 'bg-yellow-500 text-white',
+        icon: Shield,
+        description: 'Moderately concentrated market with some supply concerns'
+      };
+    } else {
+      return {
+        level: 'Low Risk',
+        color: 'bg-green-600 text-white',
+        icon: ShieldCheck,
+        description: 'Competitive market with diversified supply sources'
+      };
+    }
+  };
+
   const concentration = getConcentrationLevel(hhi);
+  const supplyRisk = getSupplyRiskLevel();
   const Icon = concentration.icon;
+  const RiskIcon = supplyRisk.icon;
 
   return (
     <Card className="shadow-sm border-border">
       <CardHeader className="border-b border-border pb-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg font-bold text-foreground">{title}</CardTitle>
-            <CardDescription>Herfindahl-Hirschman Index (HHI) and market share</CardDescription>
+            <CardDescription>Supply chain risk and market concentration</CardDescription>
           </div>
           <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
             <TabsList className="bg-gray-100">
@@ -100,15 +142,15 @@ export function ConcentrationIndexCard({
       <CardContent className="pt-6">
         {data.length > 0 ? (
           <div className="space-y-6">
-            {/* HHI Score */}
+            {/* Supply Risk and HHI Score */}
             <div className={`${concentration.bg} rounded-lg p-6 border border-gray-200`}>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <Icon className={`h-8 w-8 ${concentration.color}`} />
+                  <RiskIcon className={`h-8 w-8 ${supplyRisk.level === 'Critical Risk' ? 'text-red-600' : supplyRisk.level === 'High Risk' ? 'text-orange-500' : supplyRisk.level === 'Moderate Risk' ? 'text-yellow-500' : 'text-green-600'}`} />
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">Concentration Level</p>
-                    <p className={`text-2xl font-bold ${concentration.color}`}>
-                      {concentration.level}
+                    <p className="text-sm text-gray-600 font-medium">Supply Risk Level</p>
+                    <p className={`text-2xl font-bold ${supplyRisk.level === 'Critical Risk' ? 'text-red-600' : supplyRisk.level === 'High Risk' ? 'text-orange-500' : supplyRisk.level === 'Moderate Risk' ? 'text-yellow-500' : 'text-green-600'}`}>
+                      {supplyRisk.level}
                     </p>
                   </div>
                 </div>
@@ -118,7 +160,8 @@ export function ConcentrationIndexCard({
                   <p className="text-xs text-gray-500">out of 10,000</p>
                 </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+              <p className="text-xs text-gray-600 italic mb-3">{supplyRisk.description}</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full ${
                     hhi < 1500 ? 'bg-green-500' : hhi < 2500 ? 'bg-yellow-500' : 'bg-red-500'

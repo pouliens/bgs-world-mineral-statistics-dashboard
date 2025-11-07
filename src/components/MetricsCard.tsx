@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Minus, Trophy, Calendar, Globe, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Trophy, Calendar, Globe, Activity, LineChart } from 'lucide-react';
 import type { MetricCard } from '@/types/minerals';
 
 interface MetricsCardProps {
@@ -47,6 +47,8 @@ export function MetricsCard({ metric }: MetricsCardProps) {
         return <Globe className={iconClass} />;
       case 'activity':
         return <Activity className={iconClass} />;
+      case 'chart':
+        return <LineChart className={iconClass} />;
     }
   };
 
