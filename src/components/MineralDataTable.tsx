@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getPaginationRowModel,
+  getFilteredRowModel,
   flexRender,
   type ColumnDef,
   type SortingState,
@@ -18,6 +19,13 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ArrowUpDown, Download } from 'lucide-react';
 import type { MineralProperties } from '@/types/minerals';
 
@@ -28,6 +36,30 @@ interface MineralDataTableProps {
 
 export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'YEAR', desc: true }]);
+  const [selectedCountry, setSelectedCountry] = useState<string>('all');
+
+  // Get unique countries from the data
+  const countries = useMemo(() => {
+    const uniqueCountries = new Set<string>();
+    data.forEach((item) => {
+      const country = item.COUNTRY_NAME || item.COUNTRY;
+      if (country) {
+        uniqueCountries.add(country);
+      }
+    });
+    return Array.from(uniqueCountries).sort();
+  }, [data]);
+
+  // Filter data based on selected country
+  const filteredData = useMemo(() => {
+    if (selectedCountry === 'all') {
+      return data;
+    }
+    return data.filter((item) => {
+      const country = item.COUNTRY_NAME || item.COUNTRY;
+      return country === selectedCountry;
+    });
+  }, [data, selectedCountry]);
 
   const columns: ColumnDef<MineralProperties>[] = [
     {
@@ -126,11 +158,12 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
   ];
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     state: {
       sorting,
@@ -149,10 +182,30 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
           <CardTitle className="text-lg font-bold">Mineral Data</CardTitle>
           <CardDescription>Detailed records of all mineral statistics</CardDescription>
         </div>
-        <Button onClick={onExport} variant="outline" size="sm">
-          <Download className="mr-2 h-4 w-4" />
-          Export CSV
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label htmlFor="country-filter" className="text-sm font-medium whitespace-nowrap">
+              Filter by Country:
+            </label>
+            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <SelectTrigger id="country-filter" className="w-[200px]">
+                <SelectValue placeholder="All Countries" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Countries</SelectItem>
+                {countries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={onExport} variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="rounded-md border overflow-hidden">
@@ -203,23 +256,28 @@ export function MineralDataTable({ data, onExport }: MineralDataTableProps) {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-between py-4">
+          <div className="text-sm text-muted-foreground">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
