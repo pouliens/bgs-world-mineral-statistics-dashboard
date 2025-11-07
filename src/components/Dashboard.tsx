@@ -560,6 +560,14 @@ export function Dashboard() {
               <p className="text-gray-200">
                 Mineral production, import, and export data from 1970-2023
               </p>
+              <a 
+                href="https://www.bgs.ac.uk/mineralsuk/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-gray-400 hover:text-gray-200 transition-colors mt-3 inline-block underline-offset-2 hover:underline"
+              >
+                Visit BGS Minerals UK →
+              </a>
             </div>
             <Tabs
               value={filters.comparisonMode ? "comparison" : "single"}
