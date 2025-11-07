@@ -37,6 +37,14 @@ export function Dashboard() {
   const [multiCommodityData, setMultiCommodityData] = useState<Record<string, MineralProperties[]>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string>('all');
+  const [selectedYoYCountry, setSelectedYoYCountry] = useState<string>('all');
+
+  // Reset country filters when commodity or filters change
+  useEffect(() => {
+    setSelectedCountry('all');
+    setSelectedYoYCountry('all');
+  }, [filters.commodity, filters.yearFrom, filters.yearTo]);
 
   // Fetch data when filters change
   useEffect(() => {
@@ -88,9 +96,29 @@ export function Dashboard() {
     loadData();
   }, [filters.commodity, filters.yearFrom, filters.yearTo, filters.comparisonMode, filters.selectedCommodities]);
 
-  // Process data for charts - now returns all three statistics types
-  const getChartData = () => {
-    const aggregated = data.reduce((acc, item) => {
+  // Get unique countries from data
+  const getUniqueCountries = () => {
+    const countries = new Set<string>();
+    data.forEach((item) => {
+      const country = item.COUNTRY_NAME || item.COUNTRY;
+      if (country && country !== 'Unknown') {
+        countries.add(country);
+      }
+    });
+    return Array.from(countries).sort();
+  };
+
+  // Process data for charts - now returns all three statistics types, with optional country filter
+  const getChartData = (countryFilter: string = 'all') => {
+    // Filter data by country if specified
+    const filteredData = countryFilter === 'all'
+      ? data
+      : data.filter(item => {
+          const country = item.COUNTRY_NAME || item.COUNTRY;
+          return country === countryFilter;
+        });
+
+    const aggregated = filteredData.reduce((acc, item) => {
       const year = item.YEAR;
 
       if (!acc[year]) {
@@ -506,9 +534,11 @@ export function Dashboard() {
     });
   };
 
-  const chartData = getChartData();
+  const chartData = getChartData(selectedCountry);
+  const yoyChartData = getChartData(selectedYoYCountry);
   const topCountries = getTopCountries();
   const allCountries = getAllCountries();
+  const uniqueCountries = getUniqueCountries();
   const metrics = getMetrics();
   const multiChartData = filters.comparisonMode ? getMultiCommodityChartData() : [];
   const comparisonMetrics = filters.comparisonMode ? getComparisonMetrics() : [];
@@ -677,6 +707,9 @@ export function Dashboard() {
                 <TimeSeriesChart
                   data={chartData}
                   title="Production, Imports & Exports Over Time"
+                  countries={uniqueCountries}
+                  selectedCountry={selectedCountry}
+                  onCountryChange={setSelectedCountry}
                 />
 
                 <ComparisonBarChart
@@ -693,8 +726,11 @@ export function Dashboard() {
                 />
 
                 <YearOverYearGrowthChart
-                  data={chartData}
+                  data={yoyChartData}
                   title="Year-over-Year Growth Rate (%)"
+                  countries={uniqueCountries}
+                  selectedCountry={selectedYoYCountry}
+                  onCountryChange={setSelectedYoYCountry}
                 />
               </div>
 

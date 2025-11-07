@@ -10,6 +10,14 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { formatCompactNumber } from '@/lib/utils';
 
 interface TimeSeriesData {
@@ -22,17 +30,48 @@ interface TimeSeriesData {
 interface TimeSeriesChartProps {
   data: TimeSeriesData[];
   title: string;
+  countries: string[];
+  selectedCountry: string;
+  onCountryChange: (country: string) => void;
 }
 
 export function TimeSeriesChart({
   data,
   title,
+  countries,
+  selectedCountry,
+  onCountryChange,
 }: TimeSeriesChartProps) {
   return (
     <Card className="shadow-sm border-border">
       <CardHeader className="border-b border-border pb-4">
-        <CardTitle className="text-lg font-bold text-foreground">{title}</CardTitle>
-        <CardDescription>Track production, imports, and exports trends over time</CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <CardTitle className="text-lg font-bold text-foreground">{title}</CardTitle>
+            <CardDescription>Track production, imports, and exports trends over time</CardDescription>
+          </div>
+          <div className="min-w-[200px]">
+            <Label htmlFor="country-filter" className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2 block">
+              Filter by Country
+            </Label>
+            <Select value={selectedCountry} onValueChange={onCountryChange}>
+              <SelectTrigger
+                id="country-filter"
+                className="w-full bg-white dark:bg-gray-900 border-2 border-input hover:border-[#002E40] focus:border-[#002E40] focus:ring-2 focus:ring-[#002E40]/20 transition-all"
+              >
+                <SelectValue placeholder="All Countries" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                <SelectItem value="all">All Countries</SelectItem>
+                {countries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="pt-6">
         <ResponsiveContainer width="100%" height={400}>
