@@ -7,11 +7,11 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  // Uncomment and configure these for GitLab Pages if your project is not at the root:
-  // site: 'https://your-username.gitlab.io',
-  // base: '/your-project-name',
+  // GitHub Pages configuration
+  site: 'https://pouliens.github.io',
+  base: '/bgs-world-mineral-statistics-dashboard',
 
-  // Static output for GitLab Pages
+  // Static output for deployment
   output: 'static',
 
   vite: {
