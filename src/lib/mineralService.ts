@@ -14,8 +14,9 @@ interface FetchMineralDataParams {
  * - Uses Vite proxy (/bgs-api) to avoid CORS
  *
  * In production (static build):
- * - Uses CORS proxy (corsproxy.io) to access BGS
- * - Fallback to direct fetch if CORS is allowed
+ * - Uses multiple CORS proxy services for reliability
+ * - Tries allorigins.win, cors-anywhere, and thingproxy
+ * - All proxies use HTTPS to avoid mixed content issues
  */
 export async function fetchMineralData({
   commodity,
@@ -42,20 +43,29 @@ export async function fetchMineralData({
 
   // In production, use CORS proxy
   const bgsUrl = `http://ogc2.bgs.ac.uk/cgi-bin/UKWM/ows?${wfsParams.toString()}`;
-  const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(bgsUrl)}`;
+  
+  // Try multiple CORS proxy services for better reliability
+  const corsProxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(bgsUrl)}`,
+    `https://cors-anywhere.herokuapp.com/${bgsUrl}`,
+    `https://thingproxy.freeboard.io/fetch/${bgsUrl}`
+  ];
 
-  try {
-    const response = await axios.get<MineralData>(corsProxyUrl, {
-      timeout: 30000,
-    });
-    return response.data;
-  } catch (error) {
-    // Fallback to direct fetch (may fail due to CORS)
+  for (const proxyUrl of corsProxies) {
     try {
-      const response = await axios.get<MineralData>(bgsUrl);
+      const response = await axios.get<MineralData>(proxyUrl, {
+        timeout: 30000,
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       return response.data;
-    } catch (directError) {
-      throw new Error('Failed to fetch mineral data from BGS. Please try again later.');
+    } catch (error) {
+      console.warn(`CORS proxy ${proxyUrl} failed:`, error);
+      // Continue to next proxy
     }
   }
+
+  // If all proxies fail, throw an error
+  throw new Error('Failed to fetch mineral data from BGS. All CORS proxy services are unavailable. Please try again later.');
 }
