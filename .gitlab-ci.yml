@@ -3,8 +3,8 @@ image: node:20
 pages:
   stage: deploy
   script:
-    # Install dependencies (using npm install due to optional dependencies bug in npm ci)
-    - npm install
+    # Install dependencies (using npm install to properly handle optional dependencies)
+    - npm install --include=optional
 
     # Build the project
     - npm run build
@@ -19,5 +19,4 @@ pages:
     - main
   cache:
     paths:
-      - node_modules/
       - .npm/
