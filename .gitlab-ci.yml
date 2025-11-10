@@ -1,16 +1,13 @@
-image: node:20
+image: oven/bun:1
 
 pages:
   stage: deploy
   script:
     # Install dependencies
-    - npm install --include=optional
-
-    # Workaround: Install Rollup native binary from public npm if Nexus doesn't have it
-    - npm install --no-save --registry=https://registry.npmjs.org @rollup/rollup-linux-x64-gnu@4.52.5 || true
+    - bun install
 
     # Build the project
-    - npm run build
+    - bun run build
 
     # Astro outputs to 'dist' but GitLab Pages expects 'public'
     - mv dist public
@@ -22,4 +19,4 @@ pages:
     - main
   cache:
     paths:
-      - .npm/
+      - node_modules/
