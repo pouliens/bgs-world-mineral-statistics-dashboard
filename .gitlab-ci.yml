@@ -3,8 +3,11 @@ image: node:20
 pages:
   stage: deploy
   script:
-    # Install dependencies (using npm install to properly handle optional dependencies)
+    # Install dependencies
     - npm install --include=optional
+
+    # Workaround: Install Rollup native binary from public npm if Nexus doesn't have it
+    - npm install --no-save --registry=https://registry.npmjs.org @rollup/rollup-linux-x64-gnu@4.52.5 || true
 
     # Build the project
     - npm run build
