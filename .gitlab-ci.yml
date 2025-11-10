@@ -1,13 +1,13 @@
-image: oven/bun:latest
+image: node:20-alpine
 
 pages:
   stage: deploy
   script:
     # Install dependencies
-    - bun install
+    - npm ci
 
     # Build the project
-    - bun run build
+    - npm run build
 
     # Astro outputs to 'dist' but GitLab Pages expects 'public'
     - mv dist public
@@ -20,3 +20,4 @@ pages:
   cache:
     paths:
       - node_modules/
+      - .npm/
