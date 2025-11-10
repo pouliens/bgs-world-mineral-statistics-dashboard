@@ -112,7 +112,7 @@ export function YearOverYearGrowthChart({
             <Select value={selectedCountry} onValueChange={onCountryChange}>
               <SelectTrigger
                 id="yoy-country-filter"
-                className="w-full bg-white dark:bg-gray-900 border-2 border-input hover:border-[#002E40] focus:border-[#002E40] focus:ring-2 focus:ring-[#002E40]/20 transition-all"
+                className="w-full bg-white dark:bg-white border-2 border-input hover:border-[#002E40] focus:border-[#002E40] focus:ring-2 focus:ring-[#002E40]/20 transition-all"
               >
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
