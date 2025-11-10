@@ -3,8 +3,8 @@ image: node:20
 pages:
   stage: deploy
   script:
-    # Install dependencies
-    - npm ci
+    # Install dependencies (using npm install due to optional dependencies bug in npm ci)
+    - npm install
 
     # Build the project
     - npm run build
